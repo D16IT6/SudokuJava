@@ -36,7 +36,7 @@ public class PaintCell implements Runnable {
         while (data != null) {
             if (true) {
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(50);
                     lableInput[data[0]][data[1]].setText(data[2] + "");
                     lableInput[data[0]][data[1]].setHover(true);
                     lableInput[data[0]][data[1]].repaint();

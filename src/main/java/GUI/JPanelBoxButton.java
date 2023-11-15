@@ -1,9 +1,10 @@
 package GUI;
 
+import Algorithm.MRV;
+import Algorithm.Service;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -13,7 +14,7 @@ public class JPanelBoxButton extends JPanel {
     private PaintCell paintCell;
     private CoppyArray coppyArray;
 
-    public JPanelBoxButton(LableInput[][] lableInput, Service service) {
+    public JPanelBoxButton(LableInput[][] lableInput, Service service,MRV mrv) {
         this.lableInput = lableInput;
         this.service = service;
         this.coppyArray = new CoppyArray();
@@ -31,6 +32,7 @@ public class JPanelBoxButton extends JPanel {
                 System.out.println("click button");
                 LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
                 service.solveSudoku(lableTemp);
+                System.out.println(service.getCount());
                 paintCell = new PaintCell(lableInput, service.getQueue(), coppyArray.getCopyLableInput());
                 Thread thread = new Thread(paintCell);
                 thread.start();
@@ -60,13 +62,14 @@ public class JPanelBoxButton extends JPanel {
 
         JButtonGUI buttonSolveWithMrv = new JButtonGUI("Heuristic");
         buttonSolveWithMrv.setBounds(250, 100, 150, 100);
-        buttonSolveWithBackTracking.addMouseListener(new MouseListener() {
+        buttonSolveWithMrv.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("click button");
+                System.out.println("click button heu");
                 LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
-                service.solveSudoku(lableTemp);
-                paintCell = new PaintCell(lableInput, service.getQueue(), coppyArray.getCopyLableInput());
+                mrv.sloveSudokuWithMRV(lableTemp);
+                System.out.println(mrv.getCount());
+                paintCell = new PaintCell(lableInput, mrv.getQueue(), coppyArray.getCopyLableInput());
                 Thread thread = new Thread(paintCell);
                 thread.start();
             }
@@ -93,9 +96,5 @@ public class JPanelBoxButton extends JPanel {
             }
         });
         this.add(buttonSolveWithMrv);
-
-
-
-
     }
 }

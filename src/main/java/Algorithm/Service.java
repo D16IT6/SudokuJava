@@ -1,4 +1,6 @@
-package GUI;
+package Algorithm;
+import GUI.LableInput;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Files;
@@ -11,6 +13,10 @@ import java.util.Queue;
 public class Service {
     private Queue<Integer[]> queue;
 
+    private int count;
+    public int getCount() {
+        return count;
+    }
     public Queue<Integer[]> getQueue() {
         return queue;
     }
@@ -65,6 +71,7 @@ public class Service {
                             queue.add(cell);
                             lableInput[i][j].setText(k+"");
                             lableInput[i][j].repaint();
+                            count++;
                             if (solveSudoku(lableInput)) {
                                 return true;
                             } else {
