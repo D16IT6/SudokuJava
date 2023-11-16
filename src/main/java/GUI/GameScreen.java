@@ -1,7 +1,7 @@
 package GUI;
 
+import Algorithm.Backtracking;
 import Algorithm.MRV;
-import Algorithm.Service;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.*;
 public class GameScreen {
     private JFrame jFrame;
     private  JPanelBoxGame panelBoxGame;
-    private Service service;
+    private Backtracking Backtracking;
     private MRV mrv;
     private String Path="D:\\schoolyear3\\nmtrituenhantao\\SudokuJava\\src\\main\\java\\DeSodoku\\de8.txt";
     public GameScreen() {
@@ -20,11 +20,11 @@ public class GameScreen {
         jFrame.setLocationRelativeTo(null);
         jFrame.setLayout(new BorderLayout());
         panelBoxGame = new JPanelBoxGame();
-        service=new Service();
+        Backtracking=new Backtracking();
         mrv = new MRV();
         jFrame.add(panelBoxGame, BorderLayout.WEST);
-        jFrame.add(new JPanelBoxButton(panelBoxGame.getSudokuBox(),service,mrv), BorderLayout.EAST);
-        ReadFile.setData(panelBoxGame.getSudokuBox(),Path);
+        jFrame.add(new JPanelBoxButton(panelBoxGame.getSudokuBox(),Backtracking,mrv,panelBoxGame,jFrame), BorderLayout.EAST);
+//        ReadFile.setData(panelBoxGame.getSudokuBox(),Path);
         jFrame.setVisible(true);
     }
 

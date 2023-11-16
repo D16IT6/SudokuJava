@@ -16,8 +16,6 @@ public class JPanelBoxGame extends JPanel{
                 this.add(sudokuBox[i][j]);
             }
         }
-
-
     }
 
     public LableInput[][] getSudokuBox() {

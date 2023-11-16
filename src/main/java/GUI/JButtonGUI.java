@@ -16,18 +16,18 @@ public class JButtonGUI extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(new Color(255, 255, 255));
-        g.fillRect(0, 0, getWidth(), getHeight()/2);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
         // Set text color
         g.setColor(Color.black);
         g.setFont(new Font("Arial", Font.BOLD, 15));
         int x = (getWidth() - g.getFontMetrics().stringWidth(text))/2;
-        int y = (getHeight() + g.getFontMetrics().getAscent()) / 4;
+        int y = (getHeight() + g.getFontMetrics().getAscent()) / 2;
         g.drawString(text, x, y);
 
         // Set border color
         g.setColor(new Color(31, 141, 248));
-        g.drawRect(0, 0, getWidth()-1, getHeight()/2-1);
+        g.drawRect(0, 0, getWidth()-1, getHeight()-1);
 
     }
 

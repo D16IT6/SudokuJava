@@ -13,6 +13,7 @@ public class MRV {
         }
 
         private int count=0;
+
         public MRV()
         {
             queue=new LinkedList<>();
@@ -22,11 +23,11 @@ public class MRV {
         {
             if(MRVheurictic(lableInput))
             {
-                printMatrix(lableInput);
+
                 return true;
             }
-
             return false;
+
         }
         public  boolean MRVheurictic(LableInput[][] lableInput){
             int [] emptyCell=findEmptyCellMRV(lableInput);
@@ -46,8 +47,11 @@ public class MRV {
                     count++;
                     if(MRVheurictic(lableInput))
                         return true;
-                    lableInput[row][col].setText("");
-                    lableInput[row][col].repaint();
+                    else {
+                        lableInput[row][col].setText("");
+                        lableInput[row][col].repaint();
+                    }
+
                 }
             }
             return false;
@@ -111,20 +115,21 @@ public class MRV {
         public int  getCount(){
             return count;
         }
-    public static void printMatrix(LableInput[][] a) {
-        System.out.println();
-        for (int i = 0; i < 9; i++) {
-            if (i % 3 == 0 && i != 0) {
-                System.out.println("-------------------------------");
-            }
-            for (int j = 0; j < 9; j++) {
-                if (j % 3 == 0 && j != 0) {
-                    System.out.print("|  ");
-                }
-                System.out.print(a[i][j].getText() + "  ");
-            }
-            System.out.println();
-        }
-    }
+
+//    public static void printMatrix(LableInput[][] a) {
+//        System.out.println();
+//        for (int i = 0; i < 9; i++) {
+//            if (i % 3 == 0 && i != 0) {
+//                System.out.println("-------------------------------");
+//            }
+//            for (int j = 0; j < 9; j++) {
+//                if (j % 3 == 0 && j != 0) {
+//                    System.out.print("|  ");
+//                }
+//                System.out.print(a[i][j].getText() + "  ");
+//            }
+//            System.out.println();
+//        }
+//    }
 
 }

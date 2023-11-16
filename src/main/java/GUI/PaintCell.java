@@ -2,20 +2,26 @@ package GUI;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.util.Arrays;
 import java.util.Queue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PaintCell implements Runnable {
-    private LableInput[][] lableInput;
+    private static Lock lock = new ReentrantLock();
+    private  LableInput[][] lableInput;
     public Queue<Integer[]> queue;
     public Integer[] data;
     private LableInput[][] arrayCoppy;
     private LableInput[][] origin;
+    private Boolean isBacktracking;
 
-    public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy) {
+    public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy,boolean _isBacktracking) {
         this.lableInput = lableInput;
         this.queue = queue;
         this.arrayCoppy = arrayCoppy;
         this.origin = new CoppyArray().getCopyLableInput(lableInput);
+        this.isBacktracking=_isBacktracking;
     }
 
     public void setNull(int rowCurrent, int colCurrent, int row, int col) {
@@ -25,41 +31,62 @@ public class PaintCell implements Runnable {
                     lableInput[i][j].setText("");
                     lableInput[i][j].setHover(false);
                     lableInput[i][j].repaint();
-
                 }
             }
         }
     }
 
-    public void panting() {
-        data = queue.poll();
-        while (data != null) {
-            if (true) {
-                try {
-                    Thread.sleep(50);
-                    lableInput[data[0]][data[1]].setText(data[2] + "");
-                    lableInput[data[0]][data[1]].setHover(true);
-                    lableInput[data[0]][data[1]].repaint();
-                    if (queue.peek() != null) {
-                        Integer[] temp = queue.peek();
-                        if (data[0] > temp[0] || (data[0] == temp[0] && data[1] >= temp[1])) {
-                            setNull(data[0], data[1], temp[0], temp[1]);
+    public void panting(boolean isBackTracking) {
+        synchronized (lock) {
+            if (isBackTracking) {
+                while (!queue.isEmpty()) {
+                    data = queue.poll();
+                    try {
+                        Thread.sleep(50);
+                        lableInput[data[0]][data[1]].setText(data[2] + "");
+                        lableInput[data[0]][data[1]].setHover(true);
+                        lableInput[data[0]][data[1]].repaint();
+                        if (queue.peek() != null) {
+                            Integer[] temp = queue.peek();
+                            if (data[0] > temp[0] || (data[0] == temp[0] && data[1] >= temp[1])) {
+                                setNull(data[0], data[1], temp[0], temp[1]);
+                            }
+                        } else {
+                            break;
                         }
-                        data = queue.poll();
-                    } else {
-                        break;
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
 
+            }
+            else {
+                while (!queue.isEmpty()) {
+                    data = queue.poll();
+                    try {
+                        Thread.sleep(50);
+                        lableInput[data[0]][data[1]].setText(data[2] + "");
+                        lableInput[data[0]][data[1]].setHover(true);
+                        lableInput[data[0]][data[1]].repaint();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         }
     }
 
     @Override
     public void run() {
-        panting();
+        lock.lock();
+        try {
+            // Thực hiện các thao tác trên panel
+            panting(isBacktracking);
+        } finally {
+            // Mở khoá panel sau khi hoàn thành
+            lock.unlock();
+        }
+
     }
 
     public static void printMatrix(LableInput[][] a) {

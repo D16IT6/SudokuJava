@@ -42,7 +42,21 @@ public class ReadFile {
 //        }
 //        return lableInput;
 //    }
+    public static LableInput[][] ResetData(LableInput[][] lableInput) {
+        for(int i=0;i<9;i++)
+        {
+            for(int j=0;j<9;j++)
+            {
+                lableInput[i][j].setText("");
+                lableInput[i][j].setData(false);
+                lableInput[i][j].repaint();
+            }
+        }
+        return lableInput;
+    }
     public static LableInput[][] setData(LableInput[][] lableInput,String _path) {
+
+
         File f = new File(_path);
         try (BufferedReader br = Files.newBufferedReader(f.toPath(), StandardCharsets.US_ASCII)) {
             String line;
@@ -51,8 +65,12 @@ public class ReadFile {
                 char[] values = line.toCharArray();
                 for (int column = 0; column < line.length(); column++) {
                     if (values[column]=='0')
-                            lableInput[row][column].setText("");
-                        else {
+                    {
+                        lableInput[row][column].setText("");
+                        lableInput[row][column].setData(false);
+                        lableInput[row][column].repaint();
+                    }
+                    else {
                             lableInput[row][column].setText(Character.getNumericValue(values[column]) + "");
                             lableInput[row][column].setData(true);
                             lableInput[row][column].repaint();
