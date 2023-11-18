@@ -14,7 +14,6 @@ public class JPanelBoxGame extends JPanel{
             for(int j=0;j<9;j++){
                 sudokuBox[i][j]=new LableInput();
                 this.add(sudokuBox[i][j]);
-
             }
         }
     }

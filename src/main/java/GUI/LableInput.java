@@ -1,5 +1,6 @@
 package GUI;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -33,13 +34,11 @@ public class LableInput extends Canvas {
     public String getText() {
         return text;
     }
-
     public LableInput() {
         this.setPreferredSize(new Dimension(80, 80));
         this.setBackground(new Color(255, 255, 255));
         this.setFocusable(true);
         this.setFont(new Font("Arial", Font.PLAIN, 30));
-
         addKeyListener(new CanvasKeyListener());
         addMouseListener(new CanvasMouseListener());
     }
@@ -48,7 +47,7 @@ public class LableInput extends Canvas {
     public void paint(Graphics g) {
         super.paint(g);
         if (isData) {
-            g.setColor(new Color(31, 141, 248));
+            g.setColor(Color.decode("#b6f6f5"));
             g.fillRect(0, 0, getWidth(), getHeight());
         } else if (isHover) {
             g.setColor(new Color(204, 238, 248));
@@ -71,7 +70,7 @@ public class LableInput extends Canvas {
         int x = (getWidth() - fm.stringWidth(text)) / 2;
         int y = (getHeight() + fm.getAscent()) / 2;
         g.drawString(text, x, y);
-        g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+        g.drawRect(0, 0, getWidth()-1, getHeight()-1);
     }
 
     private class CanvasKeyListener extends KeyAdapter {

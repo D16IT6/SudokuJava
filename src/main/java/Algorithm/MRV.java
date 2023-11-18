@@ -1,4 +1,6 @@
-package GUI;
+package Algorithm;
+
+import GUI.LableInput;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -9,23 +11,26 @@ public class MRV {
         public Queue<Integer[]> getQueue() {
             return queue;
         }
-        private int[][] board;
-        private int count=0;
-        public MRV(int [][]_board)
-        {
 
-            this.board=_board;
+        private int count=0;
+
+        public MRV()
+        {
             queue=new LinkedList<>();
         }
 
-        public boolean sloveSudokuWithMRV()
+        public boolean sloveSudokuWithMRV(LableInput[][] lableInput)
         {
-            if(MRVheurictic())
+            if(MRVheurictic(lableInput))
+            {
+
                 return true;
+            }
             return false;
+
         }
-        public  boolean MRVheurictic(){
-            int [] emptyCell=findEmptyCellMRV();
+        public  boolean MRVheurictic(LableInput[][] lableInput){
+            int [] emptyCell=findEmptyCellMRV(lableInput);
             int row,col;
             if(emptyCell==null)
                 return true;
@@ -33,27 +38,34 @@ public class MRV {
             col = emptyCell[1];
             for(int i=1;i<=9;i++)
             {
-                if(isValid(row,col,i))
+                if(isValid(lableInput,row,col,i))
                 {
-                    board[row][col]=i;
+                    Integer[] cell={row,col,i};
+                    queue.add(cell);
+                    lableInput[row][col].setText(i+"");
+                    lableInput[row][col].repaint();
                     count++;
-                    if(MRVheurictic())
+                    if(MRVheurictic(lableInput))
                         return true;
-                    board[row][col]=0;
+                    else {
+                        lableInput[row][col].setText("");
+                        lableInput[row][col].repaint();
+                    }
+
                 }
             }
             return false;
         }
-        public  int[] findEmptyCellMRV() {
+        public  int[] findEmptyCellMRV(LableInput[][] lableInput) {
             int[] emptyCell= new int[2];
             int minRemainingValues =Integer.MAX_VALUE;
             for(int row=0;row<9;row++)
             {
                 for (int col =0;col<9;col++)
                 {
-                    if(board[row][col]==0)
+                    if(lableInput[row][col].getText().equals(""))
                     {
-                        int remainingValue=countRemainingValues(row,col);
+                        int remainingValue=countRemainingValues(lableInput,row,col);
                         if(remainingValue<minRemainingValues)
                         {
                             minRemainingValues=remainingValue;
@@ -65,11 +77,11 @@ public class MRV {
             }
             return minRemainingValues<Integer.MAX_VALUE?emptyCell:null;
         }
-        public  boolean isValid(int row,int columns,int cur)
+        public  boolean isValid(LableInput[][] lableInput,int row,int columns,int cur)
         {
             for (int i=0;i<9;i++)
             {
-                if(board[i][columns]==cur||board[row][i]==cur)
+                if(lableInput[i][columns].getText().equals(cur+"")||lableInput[row][i].getText().equals(cur+""))
                     return false;
             }
             int boxRow= row/3 *3;
@@ -77,7 +89,7 @@ public class MRV {
             for(int i=boxRow;i<boxRow+3;i++)
             {
                 for(int j=boxColumns;j<boxColumns+3;j++){
-                    if(board[i][j]==cur)
+                    if(lableInput[i][j].getText().equals(cur+""))
                     {
                         return false;
                     }
@@ -85,11 +97,11 @@ public class MRV {
             }
             return true;
         }
-        public int countRemainingValues(int row, int col) {
+        public int countRemainingValues(LableInput[][] lableInput,int row, int col) {
             int count = 0;
             for(int cur=1;cur<=9;cur++)
             {
-                if(isValid(row,col,cur))
+                if(isValid(lableInput,row,col,cur))
                 {
                     count++;
                 }
@@ -100,15 +112,24 @@ public class MRV {
         {
             this.count=_count;
         }
-        public void setBoard(int[][] _board)
-        {
-            this.board=_board;
-        }
         public int  getCount(){
             return count;
         }
-        public int[][] getBoard(){
-            return board;
-        }
+
+//    public static void printMatrix(LableInput[][] a) {
+//        System.out.println();
+//        for (int i = 0; i < 9; i++) {
+//            if (i % 3 == 0 && i != 0) {
+//                System.out.println("-------------------------------");
+//            }
+//            for (int j = 0; j < 9; j++) {
+//                if (j % 3 == 0 && j != 0) {
+//                    System.out.print("|  ");
+//                }
+//                System.out.print(a[i][j].getText() + "  ");
+//            }
+//            System.out.println();
+//        }
+//    }
 
 }
