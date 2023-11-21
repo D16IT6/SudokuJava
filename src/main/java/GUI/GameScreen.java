@@ -14,6 +14,7 @@ public class GameScreen {
     private String Path="D:\\schoolyear3\\nmtrituenhantao\\SudokuJava\\src\\main\\java\\DeSodoku\\de8.txt";
     public GameScreen() {
         jFrame = new JFrame();
+        jFrame.setTitle("Sodoku_LaTienAnh_VuDucThang");
         jFrame.setSize(1100, 759);
         jFrame.setResizable(false);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

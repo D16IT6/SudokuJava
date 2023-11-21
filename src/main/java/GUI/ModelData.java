@@ -7,10 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class ModelData {
-//    (lableInput[i][columns].getText().equals(cur + "")
-//                    &&!lableInput[i][columns].getText().equalsIgnoreCase(cur+"") )
-//            || (lableInput[row][i].getText().equals(cur + "")
-//            &&!lableInput[row][i].getText().equalsIgnoreCase(cur+"")))
     public static boolean isValid(LableInput[][] lableInput, int row, int columns, int cur) {
         for (int i = 0; i < 9; i++) {
             if (i!=row&&i!=columns&&(lableInput[i][columns].getText().equals(cur + "") || lableInput[row][i].getText().equals(cur + "")))

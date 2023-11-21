@@ -11,7 +11,6 @@ public class MRV {
         public Queue<Integer[]> getQueue() {
             return queue;
         }
-
         private int count=0;
     private long executionTime = 0;
 
@@ -33,7 +32,6 @@ public class MRV {
             long startTime = System.currentTimeMillis();
             if (MRVheurictic(lableInput)) {
                 long endTime = System.currentTimeMillis();
-                System.out.println(startTime + "   " + endTime);
                 executionTime = endTime - startTime;
                 return true;
             }
@@ -128,20 +126,5 @@ public class MRV {
             return count;
         }
 
-//    public static void printMatrix(LableInput[][] a) {
-//        System.out.println();
-//        for (int i = 0; i < 9; i++) {
-//            if (i % 3 == 0 && i != 0) {
-//                System.out.println("-------------------------------");
-//            }
-//            for (int j = 0; j < 9; j++) {
-//                if (j % 3 == 0 && j != 0) {
-//                    System.out.print("|  ");
-//                }
-//                System.out.print(a[i][j].getText() + "  ");
-//            }
-//            System.out.println();
-//        }
-//    }
 
 }

@@ -5,6 +5,7 @@ import Algorithm.MRV;
 import DeSodoku.DeSudokuClass;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -43,24 +44,32 @@ public class JPanelBoxButton extends JPanel {
         buttonSolveWithBackTracking.setBounds(250, 20, 150, 50);
 
         JTextArea textArea = new JTextArea();
+
+        int padding=10;
+        // Đặt viền cho JTextArea
+        textArea.setBorder(new EmptyBorder(padding, padding+20, padding, padding));
+        textArea.setFont(new Font("Arial", Font.BOLD , 12));
         textArea.setBounds(150, 500, 330, 200);
 
         buttonSolveWithBackTracking.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(paintCell.isSoloved())
-                    JOptionPane.showMessageDialog(null, "Ok","Lỗi",JOptionPane.WARNING_MESSAGE);
+                if(!ModelData.checkValidate(lableInput))
+                    JOptionPane.showMessageDialog(null, "Đề sai","Lỗi",JOptionPane.ERROR_MESSAGE);
+                else if(paintCell.isSoloved())
+                    JOptionPane.showMessageDialog(null, "Đã giải","Thông tin",JOptionPane.OK_CANCEL_OPTION);
                 else if(threadS!=null&&threadS.isAlive()){
-                JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else if(threadM!=null&&threadM.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy HeuRisTic","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy Heuristic","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else {
                     LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
                     boolean check=backtracking.solveSudoku(lableTemp);
                     if (check) {
-                        textArea.setText("Số lần nhập của thuật toán BackTracking:" + backtracking.getCount() + "\n" + "Thời gian chạy:" + backtracking.getExecutionTime() + "ms");
+                        textArea.setText("Số lần nhập của thuật toán BackTracking:" + backtracking.getCount() +" lần"+ "\n" + "Thời gian chạy:" + backtracking.getExecutionTime() + "ms");
+                        backtracking.setCount(0);
                         paintCell = new PaintCell(lableInput, backtracking.getQueue(), coppyArray.getCopyLableInput(), true);
                         threadS = new Thread(paintCell);
                         threadS.start();
@@ -99,22 +108,23 @@ public class JPanelBoxButton extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(!ModelData.checkValidate(lableInput))
-                    JOptionPane.showMessageDialog(null, "De sai","Lỗi",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đề sai","Lỗi",JOptionPane.ERROR_MESSAGE);
                 else if(paintCell.isSoloved())
                     JOptionPane.showMessageDialog(null, "Đã giải","Thông tin",JOptionPane.OK_CANCEL_OPTION);
                 else if(threadS!=null&&threadS.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else if(threadM!=null&&threadM.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy HeuRisTic","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy Heuristic","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                LableInput[][] lableTemp1 = coppyArray.getCopyLableInput(lableInput);//chua toi uu
-                if (mrv.sloveSudokuWithMRV(lableTemp1)) {
+                LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
+                if (mrv.sloveSudokuWithMRV(lableTemp)) {
                     paintCell = new PaintCell(lableInput, mrv.getQueue(), coppyArray.getCopyLableInput(), false);
                     threadM = new Thread(paintCell);
                     threadM.start();
-                    textArea.setText("Số lần nhập Heuristic:" + mrv.getCount() + "\n" + "Thời gian chạy:" + mrv.getExecutionTime() + "ms");
+                    textArea.setText("Số lần nhập thuật toán Heuristic:" + mrv.getCount() +" lần"+ "\n" + "Thời gian chạy: " + mrv.getExecutionTime() + " ms");
+                    mrv.setCount(0);
                 } else {
                     JOptionPane.showMessageDialog(null, "Không thể giải được đề");
                 }}
@@ -149,10 +159,10 @@ public class JPanelBoxButton extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 paintCell.setSoloved(false);
                 if(threadS!=null&&threadS.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else if(threadM!=null&&threadM.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy HeuRisTic","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy Heuristic","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else {
                     if (ModelData.checkData(lableInput))
@@ -187,11 +197,12 @@ public class JPanelBoxButton extends JPanel {
         btnReset.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                paintCell.setSoloved(false);
                 if(threadS!=null&&threadS.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy BackTracking","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else if(threadM!=null&&threadM.isAlive()){
-                    JOptionPane.showMessageDialog(null, "Đang chạy HeuRisTic","Lỗi",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Đang chạy Heuristic","Cảnh báo",JOptionPane.WARNING_MESSAGE);
                 }
                 else
                 ModelData.ResetData(lableInput);
@@ -219,8 +230,6 @@ public class JPanelBoxButton extends JPanel {
             }
         });
 
-        URL resourceURL = DeSudokuClass.class.getResource("de5.txt");
-
         final JFileChooser fileDialog = new JFileChooser(new File(System.getProperty("user.dir"))+"\\src\\main\\java\\DeSodoku");
         JButtonGUI btnChoseeFile = new JButtonGUI("Chọn đề");
         btnChoseeFile.setBounds(250, 340, 150, 50);
@@ -235,11 +244,12 @@ public class JPanelBoxButton extends JPanel {
                     JOptionPane.showMessageDialog(null, "Đang chạy HeuRisTic","Lỗi",JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    System.out.println(resourceURL);
+
                     int returnVal = fileDialog.showOpenDialog(frame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         file = fileDialog.getSelectedFile();
                         path = file.getAbsolutePath();
+                        paintCell.setSoloved(false);
                         ModelData.setData(panelBoxGame.getSudokuBox(), path);
                     }
                 }
@@ -266,8 +276,12 @@ public class JPanelBoxButton extends JPanel {
 
             }
         });
+        JLabel labelTocdo= new JLabel();
+        labelTocdo.setText("Tốc độ");
+        labelTocdo.setFont(new Font("Arial", Font.BOLD , 16));
+        labelTocdo.setBounds(400,420,200,20);
         JSlider slider = new JSlider(JSlider.HORIZONTAL, 20, 220, 40);
-        slider.setBounds(200,420,200,20);
+        slider.setBounds(150,420,230,20);
         slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 JSlider source = (JSlider)e.getSource();
@@ -278,9 +292,7 @@ public class JPanelBoxButton extends JPanel {
                 }
             }
         });
-        JLabel labelTocdo= new JLabel();
-        labelTocdo.setText("Tốc độ");
-        labelTocdo.setBounds(420,420,200,20);
+
         this.add(buttonSolveWithBackTracking);
         this.add(buttonSolveWithMrv);
         this.add(btnUnSlove);

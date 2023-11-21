@@ -10,7 +10,7 @@ import java.util.Stack;
 public class Backtracking {
     private Queue<Integer[]> queue;
 
-    private int count;
+    private int count=0;
     private long executionTime = 0;
 
     public long getExecutionTime() {
@@ -31,6 +31,10 @@ public class Backtracking {
 
     public Backtracking() {
         queue = new LinkedList<>();
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public boolean isValid(LableInput[][] lableInput, int row, int columns, int cur) {
@@ -54,7 +58,6 @@ public class Backtracking {
         long startTime = System.currentTimeMillis();
         if (backtracking(lableInput)) {
             long endTime = System.currentTimeMillis();
-            System.out.println(startTime + "   " + endTime);
             executionTime = endTime - startTime;
             return true;
         }
