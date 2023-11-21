@@ -2,8 +2,11 @@ package GUI;
 
 import Algorithm.Backtracking;
 import Algorithm.MRV;
+import DeSodoku.DeSudokuClass;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -79,7 +82,7 @@ public class JPanelBoxButton extends JPanel {
         });
 
         JButtonGUI buttonSolveWithMrv = new JButtonGUI("Heuristic");
-        buttonSolveWithMrv.setBounds(250, 120, 150, 50);
+        buttonSolveWithMrv.setBounds(250, 100, 150, 50);
         buttonSolveWithMrv.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -142,7 +145,7 @@ public class JPanelBoxButton extends JPanel {
         });
 
         JButtonGUI btnUnSlove = new JButtonGUI("Xoá giải");
-        btnUnSlove.setBounds(250, 220, 150, 50);
+        btnUnSlove.setBounds(250, 180, 150, 50);
         btnUnSlove.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -171,7 +174,7 @@ public class JPanelBoxButton extends JPanel {
             }
         });
         JButtonGUI btnReset = new JButtonGUI("Reset");
-        btnReset.setBounds(250, 320, 150, 50);
+        btnReset.setBounds(250, 260, 150, 50);
 
         btnReset.addMouseListener(new MouseListener() {
             @Override
@@ -202,14 +205,17 @@ public class JPanelBoxButton extends JPanel {
             }
         });
 
-        final JFileChooser fileDialog = new JFileChooser();
+        var defaultLocation = DeSudokuClass.class.getResource("de1.txt");
+
+        final JFileChooser fileDialog = new JFileChooser("E:\\");
         JButtonGUI btnChoseeFile = new JButtonGUI("Chọn đề");
-        btnChoseeFile.setBounds(250, 420, 150, 50);
+        btnChoseeFile.setBounds(250, 340, 150, 50);
 
             btnChoseeFile.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("vao  cho se");
+                System.out.println(defaultLocation);
                 int returnVal = fileDialog.showOpenDialog(frame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     java.io.File file = fileDialog.getSelectedFile();
@@ -242,12 +248,30 @@ public class JPanelBoxButton extends JPanel {
 
             }
         });
-
+        JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 90);
+        slider.setBounds(200,420,200,20);
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider)e.getSource();
+                int value = source.getValue();
+                System.out.println("Giá trị mới: " + value);
+                if(paintCell!=null)
+                {
+                    paintCell.setSpeed(value);
+                }
+            }
+        });
+        JLabel labelTocdo= new JLabel();
+        labelTocdo.setText("Tốc độ");
+        labelTocdo.setBounds(420,420,200,20);
         this.add(buttonSolveWithBackTracking);
         this.add(buttonSolveWithMrv);
         this.add(btnUnSlove);
         this.add(btnReset);
         this.add(btnChoseeFile);
+        this.add(slider);
+        this.add(labelTocdo);
         this.add(textArea);
+
     }
 }

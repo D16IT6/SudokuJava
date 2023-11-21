@@ -16,7 +16,16 @@ public class PaintCell implements Runnable {
     private LableInput[][] origin;
     private Boolean isBacktracking;
 
-    public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy,boolean _isBacktracking) {
+    private int speed=20;
+
+    public void setSpeed(int _speed) {
+        speed = _speed;
+    }
+    public int getSpeed() {
+        return speed;
+    }
+
+    public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy, boolean _isBacktracking) {
         this.lableInput = lableInput;
         this.queue = queue;
         this.arrayCoppy = arrayCoppy;
@@ -42,7 +51,7 @@ public class PaintCell implements Runnable {
                 while (!queue.isEmpty()) {
                     data = queue.poll();
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(220-speed*2);
                         lableInput[data[0]][data[1]].setText(data[2] + "");
                         lableInput[data[0]][data[1]].setHover(true);
                         lableInput[data[0]][data[1]].repaint();
@@ -64,7 +73,7 @@ public class PaintCell implements Runnable {
                 while (!queue.isEmpty()) {
                     data = queue.poll();
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(220-speed*2);
                         lableInput[data[0]][data[1]].setText(data[2] + "");
                         lableInput[data[0]][data[1]].setHover(true);
                         lableInput[data[0]][data[1]].repaint();
