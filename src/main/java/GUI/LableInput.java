@@ -6,6 +6,11 @@ import java.awt.event.*;
 
 public class LableInput extends Canvas {
     private boolean isSelected = false;
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     private boolean isHover = false;
     private boolean isData = false;
 
@@ -53,16 +58,11 @@ public class LableInput extends Canvas {
             g.setColor(new Color(204, 238, 248));
             g.fillRect(0, 0, getWidth(), getHeight());
         } else if (isSelected) {
-            // Vẽ nền màu xanh khi được chọn
             g.setColor(Color.blue);
             g.fillRect(0, 0, getWidth(), getHeight());
-            // Vẽ chữ trung tâm
         } else {
-            // Nếu không được chọn, vẽ nền màu trắng
             g.setColor(Color.white);
             g.fillRect(0, 0, getWidth(), getHeight());
-
-            // Vẽ chữ trung tâm
 
         }
         g.setColor(Color.black);
@@ -77,8 +77,14 @@ public class LableInput extends Canvas {
         @Override
         public void keyPressed(KeyEvent e) {
             if (isSelected) {
-                text = e.getKeyChar()+"";
-                repaint();
+                char keyPressed = e.getKeyChar();
+                if (Character.isDigit(keyPressed)) {
+                    text = String.valueOf(keyPressed);
+                    repaint();
+                }
+            }
+            if(!text.equalsIgnoreCase("")){
+                isData=true;
             }
         }
     }

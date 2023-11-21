@@ -7,22 +7,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 public class JPanelBoxButton extends JPanel {
     private LableInput[][] lableInput;
+    private File file;
     private Backtracking backtracking;
-    private  JPanelBoxGame panelBoxGame;
+    private JPanelBoxGame panelBoxGame;
     private MRV mrv;
     private PaintCell paintCell;
     private CoppyArray coppyArray;
     private JFrame frame;
+    private String path;
 
-    public JPanelBoxButton(LableInput[][] lableInput, Backtracking _backtracking,MRV _mrv,JPanelBoxGame _panelBoxGame,JFrame _frame) {
+    public JPanelBoxButton(LableInput[][] lableInput, Backtracking _backtracking, MRV _mrv, JPanelBoxGame _panelBoxGame, JFrame _frame) {
         this.lableInput = lableInput;
         this.backtracking = _backtracking;
-        this.mrv =_mrv;
-        this.panelBoxGame=_panelBoxGame;
-        this.frame=_frame;
+        this.mrv = _mrv;
+        this.panelBoxGame = _panelBoxGame;
+        this.frame = _frame;
         this.coppyArray = new CoppyArray();
         this.setPreferredSize(new Dimension(500, 800));
         this.setLayout(null);
@@ -37,20 +40,15 @@ public class JPanelBoxButton extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 LableInput[][] lableTemp1 = coppyArray.getCopyLableInput(lableInput);
-                if(backtracking.solveSudoku(lableTemp1))
-                {
-                    LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
-                    long startTime=System.currentTimeMillis();;
-                    backtracking.solveSudoku(lableTemp);
-                    long endTime=System.currentTimeMillis();
-                    long  executionTime=endTime-startTime;
-                    paintCell = new PaintCell(lableInput, backtracking.getQueue(), coppyArray.getCopyLableInput(),true);
+                boolean check=backtracking.solveSudoku(lableTemp1);
+                if (check) {
+                    textArea.setText("Số lần nhập của thuật toán BackTracking:" + backtracking.getCount() + "\n" + "Thời gian chạy:" + backtracking.getExecutionTime() + "ms");
+                    paintCell = new PaintCell(lableInput, backtracking.getQueue(), coppyArray.getCopyLableInput(), true);
                     Thread thread = new Thread(paintCell);
                     thread.start();
-                    textArea.setText("Số lần nhập của thuật toán BackTracking:"+backtracking.getCount()+"\n"+"Thời gian chạy:"+executionTime+"ms");
-                }
-                else {
-                    JOptionPane.showMessageDialog(null,"Không thể giải được đề");
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Không thể giải được đề");
                 }
 
 
@@ -85,20 +83,19 @@ public class JPanelBoxButton extends JPanel {
             public void mouseClicked(MouseEvent e) {
 
                 LableInput[][] lableTemp1 = coppyArray.getCopyLableInput(lableInput);//chua toi uu
-                if(mrv.sloveSudokuWithMRV(lableTemp1))
-                {
+                if (mrv.sloveSudokuWithMRV(lableTemp1)) {
                     LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
-                    long startTime=System.currentTimeMillis();;
+                    long startTime = System.currentTimeMillis();
+                    ;
                     mrv.sloveSudokuWithMRV(lableTemp);
-                    long endTime=System.currentTimeMillis();
-                    long  executionTime=endTime-startTime;
-                    paintCell = new PaintCell(lableInput, mrv.getQueue(), coppyArray.getCopyLableInput(),false);
+                    long endTime = System.currentTimeMillis();
+                    long executionTime = endTime - startTime;
+                    paintCell = new PaintCell(lableInput, mrv.getQueue(), coppyArray.getCopyLableInput(), false);
                     Thread thread = new Thread(paintCell);
                     thread.start();
-                    textArea.setText("Số lần nhập Heuristic:"+mrv.getCount()+"\n"+"Thời gian chạy:"+executionTime+"ms");
-                }
-                else {
-                    JOptionPane.showMessageDialog(null,"Không thể giải được đề");
+                    textArea.setText("Số lần nhập Heuristic:" + mrv.getCount() + "\n" + "Thời gian chạy:" + executionTime + "ms");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Không thể giải được đề");
                 }
 //                LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
 //                if (mrv.sloveSudokuWithMRV(lableTemp)) {
@@ -146,7 +143,8 @@ public class JPanelBoxButton extends JPanel {
         btnUnSlove.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                if (ModelData.checkData(lableInput))
+                    ModelData.setData(lableInput, paintCell.getOrigin());
             }
 
 
@@ -177,7 +175,7 @@ public class JPanelBoxButton extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("vao  cho se");
-                ReadFile.ResetData(lableInput);
+                ModelData.ResetData(lableInput);
             }
 
 
@@ -206,16 +204,16 @@ public class JPanelBoxButton extends JPanel {
         JButtonGUI btnChoseeFile = new JButtonGUI("Chọn đề");
         btnChoseeFile.setBounds(250, 420, 150, 50);
 
-            btnChoseeFile.addMouseListener(new MouseListener() {
+        btnChoseeFile.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("vao  cho se");
                 int returnVal = fileDialog.showOpenDialog(frame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    java.io.File file = fileDialog.getSelectedFile();
+                    file = fileDialog.getSelectedFile();
                     System.out.println(file.getAbsolutePath());
-                    String Path = file.getAbsolutePath();
-                    ReadFile.setData(panelBoxGame.getSudokuBox(),Path);
+                    path = file.getAbsolutePath();
+                    ModelData.setData(panelBoxGame.getSudokuBox(), path);
                 } else {
                     System.out.println("Chua chon duoc");
                 }

@@ -1,27 +1,32 @@
 package GUI;
 
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.util.Arrays;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PaintCell implements Runnable {
-    private static Lock lock = new ReentrantLock();
-    private  LableInput[][] lableInput;
+    private static final Lock lock = new ReentrantLock();
+    private final LableInput[][] lableInput;
     public Queue<Integer[]> queue;
     public Integer[] data;
-    private LableInput[][] arrayCoppy;
-    private LableInput[][] origin;
-    private Boolean isBacktracking;
+    private final LableInput[][] arrayCoppy;
+    private final LableInput[][] origin;
+    private final Stack<Integer[]> stack;
 
-    public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy,boolean _isBacktracking) {
+    public LableInput[][] getOrigin() {
+        return origin;
+    }
+
+    private final Boolean isBacktracking;
+
+    public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy, boolean _isBacktracking) {
         this.lableInput = lableInput;
         this.queue = queue;
         this.arrayCoppy = arrayCoppy;
         this.origin = new CoppyArray().getCopyLableInput(lableInput);
-        this.isBacktracking=_isBacktracking;
+        this.isBacktracking = _isBacktracking;
+        stack = new Stack<>();
     }
 
     public void setNull(int rowCurrent, int colCurrent, int row, int col) {
@@ -36,20 +41,37 @@ public class PaintCell implements Runnable {
         }
     }
 
+    public void setNull( int row, int col, Stack<Integer[]> stack) {
+        Integer[] data = stack.pop();
+        while (true) {
+            if (data[0] == row && data[1] == col)
+                break;
+            lableInput[data[0]][data[1]].setText("");
+            lableInput[data[0]][data[1]].setHover(false);
+            lableInput[data[0]][data[1]].repaint();
+            if (stack.peek() != null) {
+                data = stack.pop();
+            } else
+                break;
+        }
+    }
+
+
     public void panting(boolean isBackTracking) {
         synchronized (lock) {
             if (isBackTracking) {
                 while (!queue.isEmpty()) {
                     data = queue.poll();
+                    stack.add(data);
                     try {
                         Thread.sleep(50);
-                        lableInput[data[0]][data[1]].setText(data[2] + "");
+                        lableInput[data[0]][data[1]].setText(String.valueOf(data[2]));
                         lableInput[data[0]][data[1]].setHover(true);
                         lableInput[data[0]][data[1]].repaint();
                         if (queue.peek() != null) {
                             Integer[] temp = queue.peek();
                             if (data[0] > temp[0] || (data[0] == temp[0] && data[1] >= temp[1])) {
-                                setNull(data[0], data[1], temp[0], temp[1]);
+                                setNull(temp[0], temp[1], stack);
                             }
                         } else {
                             break;
@@ -59,13 +81,12 @@ public class PaintCell implements Runnable {
                     }
                 }
 
-            }
-            else {
+            } else {
                 while (!queue.isEmpty()) {
                     data = queue.poll();
                     try {
                         Thread.sleep(50);
-                        lableInput[data[0]][data[1]].setText(data[2] + "");
+                        lableInput[data[0]][data[1]].setText(String.valueOf(data[2]));
                         lableInput[data[0]][data[1]].setHover(true);
                         lableInput[data[0]][data[1]].repaint();
                     } catch (InterruptedException e) {

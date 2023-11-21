@@ -2,15 +2,12 @@ package GUI;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-public class ReadFile {
-//    public static LableInput[][] setDataSpace(LableInput[][] lableInput,String _path) {
+public class ModelData {
+    //    public static LableInput[][] setDataSpace(LableInput[][] lableInput,String _path) {
 //        int[][] a = new int[9][9];
 //
 //        try {
@@ -42,21 +39,18 @@ public class ReadFile {
 //        }
 //        return lableInput;
 //    }
-    public static LableInput[][] ResetData(LableInput[][] lableInput) {
-        for(int i=0;i<9;i++)
-        {
-            for(int j=0;j<9;j++)
-            {
+    public static void ResetData(LableInput[][] lableInput) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
                 lableInput[i][j].setText("");
                 lableInput[i][j].setData(false);
+                lableInput[i][j].setSelected(false);
                 lableInput[i][j].repaint();
             }
         }
-        return lableInput;
     }
-    public static LableInput[][] setData(LableInput[][] lableInput,String _path) {
 
-
+    public static LableInput[][] setData(LableInput[][] lableInput, String _path) {
         File f = new File(_path);
         try (BufferedReader br = Files.newBufferedReader(f.toPath(), StandardCharsets.US_ASCII)) {
             String line;
@@ -64,17 +58,17 @@ public class ReadFile {
             while ((line = br.readLine()) != null && row < 9) {
                 char[] values = line.toCharArray();
                 for (int column = 0; column < line.length(); column++) {
-                    if (values[column]=='0')
-                    {
+                    if (values[column] == '0') {
                         lableInput[row][column].setText("");
                         lableInput[row][column].setData(false);
+                        lableInput[row][column].setHover(false);
+                        lableInput[row][column].setSelected(false);
+                        lableInput[row][column].repaint();
+                    } else {
+                        lableInput[row][column].setText(Character.getNumericValue(values[column]) + "");
+                        lableInput[row][column].setData(true);
                         lableInput[row][column].repaint();
                     }
-                    else {
-                            lableInput[row][column].setText(Character.getNumericValue(values[column]) + "");
-                            lableInput[row][column].setData(true);
-                            lableInput[row][column].repaint();
-                        }
 //                    lableInput[row][column].setText(Character.getNumericValue(values[column]) + "");
                 }
                 row++;
@@ -84,5 +78,39 @@ public class ReadFile {
             System.out.printf("loi" + e);
             return null;
         }
+    }
+
+    public static void setData(LableInput[][] lableInput, LableInput[][] copyLableInput) {
+        try {
+            for (int row = 0; row < 9; row++) {
+                for (int column = 0; column < 9; column++) {
+                    if (copyLableInput[row][column].getText().equalsIgnoreCase("")) {
+                        lableInput[row][column].setText("");
+                        lableInput[row][column].setData(false);
+                        lableInput[row][column].setHover(false);
+                        lableInput[row][column].setSelected(false);
+                        lableInput[row][column].repaint();
+                    } else {
+                        lableInput[row][column].setText(copyLableInput[row][column].getText());
+                        lableInput[row][column].setData(true);
+                        lableInput[row][column].repaint();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.printf("loi" + e);
+        }
+    }
+
+    public static boolean checkData(LableInput[][] lableInput) {
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                if (!lableInput[row][column].getText().equalsIgnoreCase("")) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
     }
 }
