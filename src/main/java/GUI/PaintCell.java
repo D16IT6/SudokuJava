@@ -1,7 +1,6 @@
 package GUI;
 
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -10,6 +9,7 @@ public class PaintCell implements Runnable {
     private final LableInput[][] lableInput;
     public Queue<Integer[]> queue;
     public Integer[] data;
+    public Stack<Integer[]> tempStack;
     private final LableInput[][] arrayCoppy;
     private final LableInput[][] origin;
     private final Stack<Integer[]> stack;
@@ -27,6 +27,7 @@ public class PaintCell implements Runnable {
         this.origin = new CoppyArray().getCopyLableInput(lableInput);
         this.isBacktracking = _isBacktracking;
         stack = new Stack<>();
+        tempStack = new Stack<>();
     }
 
     public void setNull(int rowCurrent, int colCurrent, int row, int col) {
@@ -41,7 +42,7 @@ public class PaintCell implements Runnable {
         }
     }
 
-    public void setNull( int row, int col, Stack<Integer[]> stack) {
+    public void setNull(int row, int col, Stack<Integer[]> stack) {
         Integer[] data = stack.pop();
         while (true) {
             if (data[0] == row && data[1] == col)
@@ -49,7 +50,7 @@ public class PaintCell implements Runnable {
             lableInput[data[0]][data[1]].setText("");
             lableInput[data[0]][data[1]].setHover(false);
             lableInput[data[0]][data[1]].repaint();
-            if (stack.peek() != null) {
+            if (stack.size() > 0 && stack.peek() != null) {
                 data = stack.pop();
             } else
                 break;
@@ -59,42 +60,53 @@ public class PaintCell implements Runnable {
 
     public void panting(boolean isBackTracking) {
         synchronized (lock) {
-            if (isBackTracking) {
-                while (!queue.isEmpty()) {
-                    data = queue.poll();
-                    stack.add(data);
-                    try {
-                        Thread.sleep(50);
-                        lableInput[data[0]][data[1]].setText(String.valueOf(data[2]));
-                        lableInput[data[0]][data[1]].setHover(true);
-                        lableInput[data[0]][data[1]].repaint();
-                        if (queue.peek() != null) {
-                            Integer[] temp = queue.peek();
+            Integer[] copy = null;
+            while (!queue.isEmpty()) {
+                data = queue.poll();
+                stack.add(data);
+                try {
+                    Thread.sleep(50);
+                    lableInput[data[0]][data[1]].setText(String.valueOf(data[2]));
+                    lableInput[data[0]][data[1]].setHover(true);
+                    if (copy != null) {
+                        lableInput[copy[0]][copy[1]].setHover(false);
+                        lableInput[copy[0]][copy[1]].repaint();
+                    }
+                    lableInput[data[0]][data[1]].repaint();
+                    copy = data;
+                    if (queue.peek() != null) {
+                        Integer[] temp = queue.peek();
+                        if (isBackTracking) {
                             if (data[0] > temp[0] || (data[0] == temp[0] && data[1] >= temp[1])) {
                                 setNull(temp[0], temp[1], stack);
                             }
                         } else {
-                            break;
+                            tempStack.addAll(stack);
+                            if (checkMRV(temp[0], temp[1])) {
+                                setNull(temp[0], temp[1], stack);
+                            }
                         }
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    } else {
+                        break;
                     }
-                }
-
-            } else {
-                while (!queue.isEmpty()) {
-                    data = queue.poll();
-                    try {
-                        Thread.sleep(50);
-                        lableInput[data[0]][data[1]].setText(String.valueOf(data[2]));
-                        lableInput[data[0]][data[1]].setHover(true);
-                        lableInput[data[0]][data[1]].repaint();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            lableInput[data[0]][data[1]].setHover(false);
+            lableInput[data[0]][data[1]].repaint();
         }
+    }
+
+    public boolean checkMRV(int row, int col) {
+        Integer[] tempData;
+        while (tempStack.size() > 0 && tempStack.peek() != null) {
+            tempData = tempStack.pop();
+            if (tempData[0] == row && tempData[1] == col) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

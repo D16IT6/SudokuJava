@@ -84,36 +84,13 @@ public class JPanelBoxButton extends JPanel {
 
                 LableInput[][] lableTemp1 = coppyArray.getCopyLableInput(lableInput);//chua toi uu
                 if (mrv.sloveSudokuWithMRV(lableTemp1)) {
-                    LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
-                    long startTime = System.currentTimeMillis();
-                    ;
-                    mrv.sloveSudokuWithMRV(lableTemp);
-                    long endTime = System.currentTimeMillis();
-                    long executionTime = endTime - startTime;
                     paintCell = new PaintCell(lableInput, mrv.getQueue(), coppyArray.getCopyLableInput(), false);
                     Thread thread = new Thread(paintCell);
                     thread.start();
-                    textArea.setText("Số lần nhập Heuristic:" + mrv.getCount() + "\n" + "Thời gian chạy:" + executionTime + "ms");
+                    textArea.setText("Số lần nhập Heuristic:" + mrv.getCount() + "\n" + "Thời gian chạy:" + mrv.getExecutionTime() + "ms");
                 } else {
                     JOptionPane.showMessageDialog(null, "Không thể giải được đề");
                 }
-//                LableInput[][] lableTemp = coppyArray.getCopyLableInput(lableInput);
-//                if (mrv.sloveSudokuWithMRV(lableTemp)) {
-//                    long startTime = System.currentTimeMillis();
-//                    paintCell = new PaintCell(lableInput, mrv.getQueue(), coppyArray.getCopyLableInput(), false);
-//                    Thread thread = new Thread(paintCell);
-//                    thread.start();
-//                    try {
-//                        thread.join(); // Đợi thread hoàn thành trước khi tính thời gian
-//                    } catch (InterruptedException ex) {
-//                        throw new RuntimeException(ex);
-//                    }
-//                    long endTime = System.currentTimeMillis();
-//                    long executionTime = endTime - startTime;
-//                    textArea.setText("Số lần nhập Heuristic: " + mrv.getCount() + "\n" + "Thời gian chạy: " + executionTime + "ms");
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Không thể giải được đề");
-//                }
             }
 
 

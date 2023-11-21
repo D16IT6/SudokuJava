@@ -6,6 +6,7 @@ import java.awt.event.*;
 
 public class LableInput extends Canvas {
     private boolean isSelected = false;
+    private Color colorBackground;
 
     public void setSelected(boolean selected) {
         isSelected = selected;
@@ -13,6 +14,7 @@ public class LableInput extends Canvas {
 
     private boolean isHover = false;
     private boolean isData = false;
+    private boolean isEntered=false;
 
     public boolean isData() {
         return isData;
@@ -55,15 +57,17 @@ public class LableInput extends Canvas {
             g.setColor(Color.decode("#b6f6f5"));
             g.fillRect(0, 0, getWidth(), getHeight());
         } else if (isHover) {
-            g.setColor(new Color(204, 238, 248));
+            g.setColor(new Color(239, 203, 78));
             g.fillRect(0, 0, getWidth(), getHeight());
-        } else if (isSelected) {
-            g.setColor(Color.blue);
+        }else if(isEntered){
+            g.setColor(new Color(56, 241, 81));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }else if (isSelected) {
+            g.setColor(new Color(116, 226, 244));
             g.fillRect(0, 0, getWidth(), getHeight());
         } else {
             g.setColor(Color.white);
             g.fillRect(0, 0, getWidth(), getHeight());
-
         }
         g.setColor(Color.black);
         FontMetrics fm = g.getFontMetrics();
@@ -97,6 +101,8 @@ public class LableInput extends Canvas {
 
         @Override
         public void mousePressed(MouseEvent e) {
+            isEntered=false;
+            repaint();
             isSelected = true;
             repaint(); // Cần vẽ lại để cập nhật thay đổi
         }
@@ -108,13 +114,14 @@ public class LableInput extends Canvas {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            isSelected = true;
+            isEntered= true;
             repaint();
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
             isSelected = false;
+            isEntered=false;
             repaint(); // Cần vẽ lại để cập nhật thay đổi
         }
 

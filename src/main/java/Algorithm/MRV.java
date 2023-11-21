@@ -13,17 +13,28 @@ public class MRV {
         }
 
         private int count=0;
+    private long executionTime = 0;
 
-        public MRV()
+    public long getExecutionTime() {
+        return executionTime;
+    }
+
+    public void setExecutionTime(long executionTime) {
+        this.executionTime = executionTime;
+    }
+
+    public MRV()
         {
             queue=new LinkedList<>();
         }
 
         public boolean sloveSudokuWithMRV(LableInput[][] lableInput)
         {
-            if(MRVheurictic(lableInput))
-            {
-
+            long startTime = System.currentTimeMillis();
+            if (MRVheurictic(lableInput)) {
+                long endTime = System.currentTimeMillis();
+                System.out.println(startTime + "   " + endTime);
+                executionTime = endTime - startTime;
                 return true;
             }
             return false;
@@ -36,6 +47,7 @@ public class MRV {
                 return true;
             row = emptyCell[0];
             col = emptyCell[1];
+
             for(int i=1;i<=9;i++)
             {
                 if(isValid(lableInput,row,col,i))
