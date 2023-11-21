@@ -24,7 +24,6 @@ public class GameScreen {
         mrv = new MRV();
         jFrame.add(panelBoxGame, BorderLayout.WEST);
         jFrame.add(new JPanelBoxButton(panelBoxGame.getSudokuBox(),Backtracking,mrv,panelBoxGame,jFrame), BorderLayout.EAST);
-//        ReadFile.setData(panelBoxGame.getSudokuBox(),Path);
         jFrame.setVisible(true);
     }
 

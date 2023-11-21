@@ -6,8 +6,15 @@ import java.awt.event.*;
 
 public class LableInput extends Canvas {
     private boolean isSelected = false;
+    private Color colorBackground;
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     private boolean isHover = false;
     private boolean isData = false;
+    private boolean isEntered=false;
 
     public boolean isData() {
         return isData;
@@ -44,26 +51,59 @@ public class LableInput extends Canvas {
     }
 
     @Override
+//    public void paint(Graphics g) {
+//        super.paint(g);
+//        Graphics2D g2d = (Graphics2D) g;
+//
+//        // Vẽ nền của thành phần
+//        if (isData) {
+//            g.setColor(Color.decode("#b6f6f5"));
+//        } else if (isHover) {
+//            g.setColor(new Color(246, 122, 218));
+//        } else if (isEntered) {
+//            g.setColor(new Color(56, 241, 81));
+//        } else if (isSelected) {
+//            g.setColor(new Color(116, 226, 244));
+//        } else {
+//            g.setColor(Color.white);
+//        }
+//        g.fillRect(0, 0, getWidth(), getHeight());
+//
+//        // Vẽ viền
+//        g2d.setColor(Color.black);
+//        g2d.setStroke(new BasicStroke(2));
+//
+//        int rightBorderWidth = 10;
+//        int left = 0;
+//        int right = getWidth() -1;
+//        int top = 0;
+//        int bottom = getHeight() -1;
+//
+//        // Vẽ viền bên phải
+//        g2d.setStroke(new BasicStroke(10));
+//        g.drawRect(right - rightBorderWidth, top, rightBorderWidth, bottom);
+//
+//        // Vẽ viền các phía còn lại
+//        g2d.setStroke(new BasicStroke(2));
+//        g.drawRect(left, top, right - rightBorderWidth, bottom);
+//    }
     public void paint(Graphics g) {
         super.paint(g);
         if (isData) {
             g.setColor(Color.decode("#b6f6f5"));
             g.fillRect(0, 0, getWidth(), getHeight());
         } else if (isHover) {
-            g.setColor(new Color(204, 238, 248));
+            g.setColor(new Color(246, 122, 218));
             g.fillRect(0, 0, getWidth(), getHeight());
-        } else if (isSelected) {
-            // Vẽ nền màu xanh khi được chọn
-            g.setColor(Color.blue);
+        }else if(isEntered){
+            g.setColor(new Color(56, 241, 81));
             g.fillRect(0, 0, getWidth(), getHeight());
-            // Vẽ chữ trung tâm
+        }else if (isSelected) {
+            g.setColor(new Color(116, 226, 244));
+            g.fillRect(0, 0, getWidth(), getHeight());
         } else {
-            // Nếu không được chọn, vẽ nền màu trắng
             g.setColor(Color.white);
             g.fillRect(0, 0, getWidth(), getHeight());
-
-            // Vẽ chữ trung tâm
-
         }
         g.setColor(Color.black);
         FontMetrics fm = g.getFontMetrics();
@@ -77,8 +117,14 @@ public class LableInput extends Canvas {
         @Override
         public void keyPressed(KeyEvent e) {
             if (isSelected) {
-                text = e.getKeyChar()+"";
-                repaint();
+                char keyPressed = e.getKeyChar();
+                if (Character.isDigit(keyPressed)) {
+                    text = String.valueOf(keyPressed);
+                    repaint();
+                }
+            }
+            if(!text.equalsIgnoreCase("")){
+                isData=true;
             }
         }
     }
@@ -91,6 +137,8 @@ public class LableInput extends Canvas {
 
         @Override
         public void mousePressed(MouseEvent e) {
+            isEntered=false;
+            repaint();
             isSelected = true;
             repaint(); // Cần vẽ lại để cập nhật thay đổi
         }
@@ -102,13 +150,14 @@ public class LableInput extends Canvas {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            isSelected = true;
+            isEntered= true;
             repaint();
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
             isSelected = false;
+            isEntered=false;
             repaint(); // Cần vẽ lại để cập nhật thay đổi
         }
 

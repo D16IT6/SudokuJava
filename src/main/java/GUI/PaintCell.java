@@ -1,22 +1,27 @@
 package GUI;
 
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.util.Arrays;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PaintCell implements Runnable {
-    private static Lock lock = new ReentrantLock();
+    private static final Lock lock = new ReentrantLock();
     private  LableInput[][] lableInput;
     public Queue<Integer[]> queue;
     public Integer[] data;
+    public Stack<Integer[]> tempStack;
     private LableInput[][] arrayCoppy;
-    private LableInput[][] origin;
-    private Boolean isBacktracking;
+    private  LableInput[][] origin;
+    private  Stack<Integer[]> stack;
+    private boolean isSoloved=false;
 
-    private int speed=20;
+    private  boolean isBacktracking;
+
+    public LableInput[][] getOrigin() {
+        return origin;
+    }
+
+    private int speed=40;
 
     public void setSpeed(int _speed) {
         speed = _speed;
@@ -25,12 +30,17 @@ public class PaintCell implements Runnable {
         return speed;
     }
 
+    public PaintCell() {
+    }
+
     public PaintCell(LableInput[][] lableInput, Queue<Integer[]> queue, LableInput[][] arrayCoppy, boolean _isBacktracking) {
         this.lableInput = lableInput;
         this.queue = queue;
         this.arrayCoppy = arrayCoppy;
         this.origin = new CoppyArray().getCopyLableInput(lableInput);
-        this.isBacktracking=_isBacktracking;
+        this.isBacktracking = _isBacktracking;
+        stack = new Stack<>();
+        tempStack = new Stack<>();
     }
 
     public void setNull(int rowCurrent, int colCurrent, int row, int col) {
@@ -45,44 +55,72 @@ public class PaintCell implements Runnable {
         }
     }
 
+    public void setNull(int row, int col, Stack<Integer[]> stack) {
+        Integer[] data = stack.pop();
+        while (true) {
+            if (data[0] == row && data[1] == col)
+                break;
+            lableInput[data[0]][data[1]].setText("");
+            lableInput[data[0]][data[1]].setHover(false);
+            lableInput[data[0]][data[1]].repaint();
+            if (stack.size() > 0 && stack.peek() != null) {
+                data = stack.pop();
+            } else
+                break;
+        }
+    }
+
+
     public void panting(boolean isBackTracking) {
         synchronized (lock) {
-            if (isBackTracking) {
-                while (!queue.isEmpty()) {
-                    data = queue.poll();
-                    try {
-                        Thread.sleep(220-speed*2);
-                        lableInput[data[0]][data[1]].setText(data[2] + "");
-                        lableInput[data[0]][data[1]].setHover(true);
-                        lableInput[data[0]][data[1]].repaint();
-                        if (queue.peek() != null) {
-                            Integer[] temp = queue.peek();
+            Integer[] copy = null;
+            while (!queue.isEmpty()) {
+                data = queue.poll();
+                stack.add(data);
+                try {
+                    Thread.sleep(240-speed);
+                    lableInput[data[0]][data[1]].setText(String.valueOf(data[2]));
+                    lableInput[data[0]][data[1]].setHover(true);
+                    if (copy != null) {
+                        lableInput[copy[0]][copy[1]].setHover(false);
+                        lableInput[copy[0]][copy[1]].repaint();
+                    }
+                    lableInput[data[0]][data[1]].repaint();
+                    copy = data;
+                    if (queue.peek() != null) {
+                        Integer[] temp = queue.peek();
+                        if (isBackTracking) {
                             if (data[0] > temp[0] || (data[0] == temp[0] && data[1] >= temp[1])) {
-                                setNull(data[0], data[1], temp[0], temp[1]);
+                                setNull(temp[0], temp[1], stack);
                             }
                         } else {
-                            break;
+                            tempStack.addAll(stack);
+                            if (checkMRV(temp[0], temp[1])) {
+                                setNull(temp[0], temp[1], stack);
+                            }
                         }
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            }
-            else {
-                while (!queue.isEmpty()) {
-                    data = queue.poll();
-                    try {
-                        Thread.sleep(220-speed*2);
-                        lableInput[data[0]][data[1]].setText(data[2] + "");
-                        lableInput[data[0]][data[1]].setHover(true);
+                    } else {
+                        lableInput[data[0]][data[1]].setHover(false);
                         lableInput[data[0]][data[1]].repaint();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        break;
                     }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+
+        }
+    }
+
+    public boolean checkMRV(int row, int col) {
+        Integer[] tempData;
+        while (tempStack.size() > 0 && tempStack.peek() != null) {
+            tempData = tempStack.pop();
+            if (tempData[0] == row && tempData[1] == col) {
+                return true;
             }
         }
+        return false;
     }
 
     @Override
@@ -91,6 +129,7 @@ public class PaintCell implements Runnable {
         try {
             // Thực hiện các thao tác trên panel
             panting(isBacktracking);
+            isSoloved=true;
         } finally {
             // Mở khoá panel sau khi hoàn thành
             lock.unlock();
@@ -113,4 +152,13 @@ public class PaintCell implements Runnable {
             System.out.println();
         }
     }
+
+    public boolean isSoloved() {
+        return isSoloved;
+    }
+
+    public void setSoloved(boolean soloved) {
+        isSoloved = soloved;
+    }
 }
+
